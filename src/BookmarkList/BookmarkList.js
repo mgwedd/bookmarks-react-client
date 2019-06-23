@@ -4,11 +4,13 @@ import './BookmarkList.css'
 
 class BookmarkList extends Component {
   static defaultProps = {
-    bookmarks: []
+    bookmarks : [], 
+    onClickEdit : () => {}, 
+    onClickDelete : () => {}
   };
 
   render() {
-    const { bookmarks } = this.props
+    const { bookmarks, onClickDelete, onClickEdit } = this.props
     return (
       <section className='BookmarkList'>
         <h2>Your bookmarks</h2>
@@ -16,6 +18,8 @@ class BookmarkList extends Component {
           {bookmarks.map(bookmark =>
             <BookmarkItem
               key={bookmark.id}
+              onClickDelete={onClickDelete}
+              onClickEdit={onClickEdit}
               {...bookmark}
             />
           )}

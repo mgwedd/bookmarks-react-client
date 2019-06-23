@@ -20,6 +20,12 @@ export default function BookmarkItem(props) {
         {props.description}
       </p>
       <div className='BookmarkItem__buttons'>
+      <button
+          className='BookmarkItem__description'
+          onClick={() => props.onClickEdit(props.id)}
+        >
+          Edit
+        </button>
         <button
           className='BookmarkItem__description'
           onClick={() => props.onClickDelete(props.id)}
@@ -33,4 +39,5 @@ export default function BookmarkItem(props) {
 
 BookmarkItem.defaultProps = {
   onClickDelete: () => {},
+  onClickEdit: () => {},
 }

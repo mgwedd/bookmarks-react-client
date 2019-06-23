@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import AddBookmark from './AddBookmark/AddBookmark';
 import BookmarkList from './BookmarkList/BookmarkList';
+import AddBookmark from './AddBookmark/AddBookmark';
+import EditBookmark from './EditBookmark/EditBookmark'
 import Nav from './Nav/Nav';
 import config from './config';
 import './App.css';
@@ -33,6 +34,7 @@ class App extends Component {
   state = {
     page: 'list',
     bookmarks,
+    currentBookmarkFields : {},
     error: null,
   };
 
@@ -54,9 +56,24 @@ class App extends Component {
     })
   }
 
-  componentDidMount() {
-    fetch(config.API_ENDPOINT, {
-      method: 'GET',
+  updateEditedBookmark = editedBookmark => {
+    this.setState({
+      bookmarks: [ ...this.state.bookmarks, editedBookmark ],
+    })
+  }
+
+  onClickEdit = clickedId => {
+    const currentBookmarkFields = this.state.bookmarks.find(bookmark => bookmark.id === clickedId)
+    this.setState({
+      page : 'edit', 
+      currentBookmarkFields 
+    })
+    console.log(`This id was clicked for edit: ${clickedId}. The bookmark we found for it is: `, currentBookmarkFields)
+  }
+
+  apiInterface = (urlPath = config.API_ENDPOINT, httpMethod = 'GET') => {
+    fetch(urlPath, {
+      method: httpMethod,
       headers: {
         'content-type': 'application/json',
         'Authorization': `Bearer ${config.API_KEY}`
@@ -72,8 +89,13 @@ class App extends Component {
       .catch(error => this.setState({ error }))
   }
 
+  componentDidMount() {
+    this.apiInterface(config.API_ENDPOINT, 'GET')
+  }
+
   render() {
-    const { page, bookmarks } = this.state
+    const { page, bookmarks, currentBookmarkFields } = this.state
+    console.log('in app render, about to call EditBookmark with currentBookmarkFields: ', currentBookmarkFields)
     return (
       <main className='App'>
         <h1>Bookmarks!</h1>
@@ -85,8 +107,16 @@ class App extends Component {
               onClickCancel={() => this.changePage('list')}
             />
           )}
+          {page === 'edit' && (
+            <EditBookmark
+              updateEditedBookmark={this.updateEditedBookmark}
+              currentBookmarkFields={currentBookmarkFields}
+              onClickCancel={() => this.changePage('list')}
+            />
+          )}
           {page === 'list' && (
             <BookmarkList
+              onClickEdit={this.onClickEdit}
               bookmarks={bookmarks}
             />
           )}
