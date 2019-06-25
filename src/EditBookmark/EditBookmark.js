@@ -4,7 +4,7 @@ import config from '../config'
 
 class EditBookmark extends Component {
   static defaultProps = {
-    updatedEditedBookmark : () => {}, 
+    updateEditedBookmark : () => {}, 
     onClickCancel : () => {},
     currentBookmarkFields : {
       title : 'default title', 
@@ -30,7 +30,7 @@ class EditBookmark extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault()
-    const { updatedEditedBookmark } = this.props
+    const { updateEditedBookmark } = this.props
     // get the updated form fields from the submission
     const { title, url, description, rating } = this.state
     const updatedBookmarkFields = {
@@ -39,7 +39,6 @@ class EditBookmark extends Component {
       description : description,
       rating : rating,
     }
-    console.log('Original bookmark fields vs newly updated ones, right before PATCH fetch operations: ', '...old bookmark: ', this.props.currentBookmarkFields, ' ... and new bookmark : ', updatedBookmarkFields)
     this.setState({ error: null })
     const dynamicPatchEndpoint = config.API_ENDPOINT + `${this.state.id}`
     fetch(dynamicPatchEndpoint, {
@@ -60,12 +59,9 @@ class EditBookmark extends Component {
       }
       return res.json()
     })
-    .then(editedBookmark => {
-      title.value = ''
-      url.value = ''
-      description.value = ''
-      rating.value = ''
-      updatedEditedBookmark(editedBookmark)
+    .then( editedBookmark => {
+      console.log('edited bookmark ', editedBookmark)
+      updateEditedBookmark(editedBookmark)
     })
     .catch(error => {
       this.setState({ error })
@@ -75,12 +71,6 @@ class EditBookmark extends Component {
   render() {
     const { error, title, url, description, rating } = this.state
     const { onClickCancel } = this.props
-
-    // testing
-    const currentFields = Array.from([error, title, url, description, rating])
-    console.log('CURRENT BOOKMARK FIELDS: ', currentFields)
-    //testing 
-
     return (
       <section className='AddBookmark'>
       <h2>Edit bookmark</h2>

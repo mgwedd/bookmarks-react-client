@@ -57,8 +57,18 @@ class App extends Component {
   }
 
   updateEditedBookmark = editedBookmark => {
+    // this handler must merge the new fields into the older, now edited bookmark
+    const extractedBookmark = editedBookmark[0]
+    console.log('EXTRACTED ', extractedBookmark)
+    const newBookmarks = this.state.bookmarks.map( bookmark => {
+        if (bookmark.id === extractedBookmark.id) {
+          return extractedBookmark
+        }
+        return bookmark
+    });
+    console.log('new bookmarks about to be passed to state', newBookmarks)
     this.setState({
-      bookmarks: [ ...this.state.bookmarks, editedBookmark ],
+      bookmarks: newBookmarks,
     })
   }
 
